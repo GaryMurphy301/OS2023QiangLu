@@ -1,0 +1,1 @@
+[关于strtok()多线程不安全问题的分析](https://zhuanlan.zhihu.com/p/399398742)
