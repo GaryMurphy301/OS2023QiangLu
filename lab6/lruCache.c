@@ -23,3 +23,29 @@ lru_cache *createLRUCache(int capacity)
 
     return cache;
 }
+
+void freeLRUCache(lru_cache *cache)
+{
+    if (!cache)
+        return;
+
+    // Free the linked list
+    list_node *current = cache->head;
+    while (current)
+    {
+        list_node *temp = current;
+        current = current->next;
+        free(temp->key);
+        free(temp->cont); // Assuming content needs to be freed
+        free(temp);
+    }
+
+    // Free the hash table
+    freeHashTable(cache->table);
+
+#ifdef HASHTHREAD
+    pthread_mutex_destroy(&cache->lock);
+#endif
+
+    free(cache);
+}
