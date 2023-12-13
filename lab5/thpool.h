@@ -179,6 +179,18 @@ void thpool_destroy(threadpool);
  */
 int thpool_num_threads_working(threadpool);
 
+// Forward declaration of thpool_
+typedef struct thpool_ thpool_;
+
+typedef struct thpool_collection {
+    thpool_* read_msg_thpool;
+    thpool_* read_file_thpool;
+    thpool_* send_msg_thpool;
+} thpool_collection;
+
+void *monitor_all_thpools(void *arg) ;
+void print_thpool_average_times(thpool_ *thpool, const char *pool_name) ;
+
 
 #ifdef __cplusplus
 }
