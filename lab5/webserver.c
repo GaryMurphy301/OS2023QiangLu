@@ -7,10 +7,7 @@
 #include <netinet/in.h>
 #include "threadpool.h"
 #include <stdbool.h>
-#define NULL 0
 #define BUFFER_SIZE 1024
-#define MAX_FILENAME_SIZE 256
-#define MAX_MSG_SIZE 1024
 
 void send_msg_callback(void *arg);
 void read_file_callback(void *arg);
@@ -21,16 +18,16 @@ struct threadpool *send_msg_threadpool;
 // 结构体1：用于在 read_msg_callback 和 read_file_callback 之间传递参数
 struct ReadFileCallbackArg
 {
-    char file_path[MAX_FILENAME_SIZE];
     int client_socket;
-} read_file_callback_arg;
+    char file_path[100];
+};
 
 // 结构体2：用于在 read_file_callback 和 send_msg_callback 之间传递参数
 struct SendMsgCallbackArg
 {
-    char file_content[MAX_MSG_SIZE];
     int client_socket;
-} send_msg_callback_arg;
+    char *file_content;
+};
 
 void read_msg_callback(void *arg)
 {
@@ -98,6 +95,7 @@ void read_file_callback(void *arg)
     // 将文件内容和客户端套接字作为参数提交给下一个线程池
     struct SendMsgCallbackArg *send_msg_callback_arg = (struct SendMsgCallbackArg *)malloc(sizeof(struct SendMsgCallbackArg));
     send_msg_callback_arg->client_socket = client_socket;
+    send_msg_callback_arg->file_content = (char *)malloc(total_bytes_read);
 
     // 将文件内容读入内存
     memcpy(send_msg_callback_arg->file_content, buffer, total_bytes_read);
